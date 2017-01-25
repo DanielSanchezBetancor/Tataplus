@@ -1,5 +1,6 @@
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -32,15 +33,20 @@ import java.awt.Image;
 import java.util.Date;
 
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 
-public class VentanaPrincipal implements TreeSelectionListener {
+public class VentanaPrincipal implements ActionListener, TreeSelectionListener {
 	//Variables primitivas
 	private int altoPrograma = 700;
 	private int anchoPrograma = 1000;
+	private boolean itemSelec = false;
+	private String imageResource;
 	
 	//Componentes Swing
 	private JFrame frame;
@@ -49,6 +55,7 @@ public class VentanaPrincipal implements TreeSelectionListener {
 	private JTree arbol;
 	private JScrollPane scrollPaneArbol;
 	private GridBagConstraints c;
+	private JTextArea pdTa;
 	
 	/**
 	 * Launch the application.
@@ -103,7 +110,7 @@ public class VentanaPrincipal implements TreeSelectionListener {
 		panelDatos.setLayout(new GridBagLayout());
 		panelDatos.setBackground(Color.WHITE);
 		panelDatos.setBorder(border);
-		createVentanaDatos();
+		createPanelDatos();
 
 		TitledBorder tb = BorderFactory.createTitledBorder(border, "Filtro de búsqueda");
 		panelFiltro = new JPanel();
@@ -135,6 +142,7 @@ public class VentanaPrincipal implements TreeSelectionListener {
 		panelOpciones.add(btnNuevo);
 		
 		btnAbrir = new JButton("Abrir");
+		btnAbrir.addActionListener(this);
 		panelOpciones.add(btnAbrir);
 		
 		btnCopiar = new JButton("Copiar");
@@ -210,7 +218,7 @@ public class VentanaPrincipal implements TreeSelectionListener {
 	public void valueChanged(TreeSelectionEvent e) {
 		
 	}
-	private void createVentanaDatos() {
+	private void createPanelDatos() {
 		c = new GridBagConstraints();
 		
 		JLabel l = new JLabel("Solicitante");
@@ -320,22 +328,28 @@ public class VentanaPrincipal implements TreeSelectionListener {
 		panelDatos.add(tb12, c);
 		
 		JTextField tb13 = new JTextField();
-		c = setConstraints(5, 15, 3, 1);
+		c = setConstraints(5, 15, 2, 1);
 		panelDatos.add(tb13, c);
 
 		JTextField tb14 = new JTextField();
 		c = setConstraints(2, 17, 4, 1);
 		panelDatos.add(tb14, c);
 		
-		try {
-			URL url = this.getClass().getResource("images/casa.jpg");
-			Image image = ImageIO.read(url);
-			Imagen imagen = new Imagen(image);
-			c = setConstraints(0, 10, 2, 8);
-			c.fill = GridBagConstraints.BOTH;
-			panelDatos.add(imagen, c);
-		} catch (IOException e) {
-			e.printStackTrace();
+		c = setConstraints(0, 10, 2, 8);
+		c.fill = GridBagConstraints.BOTH;
+		if (!itemSelec) {
+			pdTa = new JTextArea();
+			pdTa.setBackground(Color.BLUE);
+			panelDatos.add(pdTa, c);
+		} else {
+			try {
+				URL url = this.getClass().getResource(imageResource);
+				Image image = ImageIO.read(url);
+				Imagen imagen = new Imagen(image);
+				panelDatos.add(imagen, c);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	private GridBagConstraints setConstraints(int gridx, int gridy, int gridwidth, int gridheight) {
@@ -677,5 +691,16 @@ public class VentanaPrincipal implements TreeSelectionListener {
 		panelBusqueda.add(jsp);
 		
 	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnAbrir) {
+			itemSelec = true;
+			imageResource = "images/casa.jpg";
+			panelDatos.revalidate();
+		}
+	}
+	protected void paintComponent(Graphics og) {
+        this.paintComponent(og);
+       }
 	
 }
